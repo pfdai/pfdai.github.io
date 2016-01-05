@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Moon&#39;s Blog</title>
+    <description>Good Place to Share Idea and Mind.
+</description>
+    <link>http://pfdai.github.io/</link>
+    <atom:link href="http://pfdai.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Tue, 05 Jan 2016 17:04:29 +0800</pubDate>
+    <lastBuildDate>Tue, 05 Jan 2016 17:04:29 +0800</lastBuildDate>
+    <generator>Jekyll v2.4.0</generator>
+    
+      <item>
+        <title>Welcome to Jekyll!</title>
+        <description>&lt;p&gt;You’ll find this post in your &lt;code&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
+
+&lt;p&gt;To add new posts, simply add a file in the &lt;code&gt;_posts&lt;/code&gt; directory that follows the convention &lt;code&gt;YYYY-MM-DD-name-of-post.ext&lt;/code&gt; and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.&lt;/p&gt;
+
+&lt;p&gt;Jekyll also offers powerful support for code snippets:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Hi, &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;Tom&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;#=&amp;gt; prints &amp;#39;Hi, Tom&amp;#39; to STDOUT.&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Check out the &lt;a href=&quot;http://jekyllrb.com/docs/home&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/jekyll/jekyll&quot;&gt;Jekyll’s GitHub repo&lt;/a&gt;. If you have questions, you can ask them on &lt;a href=&quot;https://talk.jekyllrb.com/&quot;&gt;Jekyll Talk&lt;/a&gt;.&lt;/p&gt;
+
+</description>
+        <pubDate>Tue, 05 Jan 2016 15:07:22 +0800</pubDate>
+        <link>http://pfdai.github.io/jekyll/update/2016/01/05/welcome-to-jekyll.html</link>
+        <guid isPermaLink="true">http://pfdai.github.io/jekyll/update/2016/01/05/welcome-to-jekyll.html</guid>
+        
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+      <item>
+        <title>响应式编程 ReactiveX</title>
+        <description>&lt;h1 id=&quot;reactivex&quot;&gt;响应式编程 ReactiveX&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://reactivex.io/intro.html&quot;&gt;响应式编程官方介绍&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://gank.io/post/560e15be2dca930e00da1083#toc_16&quot;&gt;给 Android 开发者的 RxJava 详解&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;rxjava-&quot;&gt;1. RxJava 的观察者模式大致如下图：&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;http://7xn2zf.com1.z0.glb.clouddn.com/rxjavarxjava_3.png&quot; alt=&quot;RxJava 观察者模式&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;rxjava---scheduler&quot;&gt;2. RxJava 线程控制 —— Scheduler&lt;/h3&gt;
+&lt;p&gt;RxJava 已经内置了几个 Scheduler:
+Schedulers.io(); Schedulers.computation(); AndroidSchedulers.mainThread();&lt;/p&gt;
+
+&lt;p&gt;subscribeOn(): 指定 subscribe() 所发生的线程，即 Observable.OnSubscribe 被激活时所处的线程。或者叫做事件产生的线程。&lt;/p&gt;
+
+&lt;p&gt;observeOn(): 指定 Subscriber 所运行在的线程。或者叫做事件消费的线程。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Observable.just(1, 2, 3, 4)
+.subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
+.observeOn(AndroidSchedulers.mainThread()) // 指定 Subscriber 的回调发生在主线程
+.subscribe(new Action1&amp;lt;Integer&amp;gt;() {
+    @Override
+    public void call(Integer number) {
+        Log.d(tag, &quot;number:&quot; + number);
+    }
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;rxjava--asynctaskhandler&quot;&gt;3. 两个例子，RxJava 分别替代 AsyncTask和Handler&lt;/h3&gt;
+
+&lt;h4 id=&quot;asynctask&quot;&gt;AsyncTask的实现&lt;/h4&gt;
+&lt;p&gt;checkRange调用成功后，将数据本地化后再开始上传&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ArrayList&amp;lt;Date&amp;gt; supplements = supplement((ArrayList&amp;lt;Date&amp;gt;) obj, startTime, endTime);
+BackupUntilNowTask task = new BackupUntilNowTask().init(supplements, &quot;&quot; + uid, pCode, new SucceedAndFailedHandler() {
+
+@Override
+public void onSuccess(Object obj) {
+upload(true, Constants.REMAINPERCENT);
+}
+
+@Override
+public void onFailure(int errorCode) {
+mCurrentBackupState.backupFailed(BatchDataManager.this);
+}
+});
+task.execute();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;BackupUntilNowTask的代码&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;private class BackupUntilNowTask extends AsyncTask&amp;lt;Void, Void, Void&amp;gt; {
+    String uid = null;
+    String pCode = null;
+    SucceedAndFailedHandler handler = null;
+    ArrayList&amp;lt;Date&amp;gt; dates = null;
+
+    public BackupUntilNowTask init(ArrayList&amp;lt;Date&amp;gt; dates, String id, String code, SucceedAndFailedHandler handler) {
+        uid = id;
+        pCode = code;
+        this.handler = handler;
+        this.dates = dates;
+
+        return this;
+    }
+
+    @Override
+    protected Void doInBackground(Void... params) {
+        for (Date date : dates)
+            addBatchedDataToUploading(date.startOfCurrentDayInGMT8(), date.startOfCurrentDayInGMT8().twentyFourHoursNext(), uid, pCode);
+        Date now = Date.now().startOfCurrentDayInGMT8();
+        setNeedBackupTime(now.getTime());
+        addBatchedDataToUploading(now, now.twentyFourHoursNext(), uid, pCode);
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void result) {
+        handler.onSuccess(null);
+        // BatchDataUploaderSetting.getInstance().setAlarm();
+    }
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;rxjava&quot;&gt;RxJava的方式进行替代后的代码效果&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;Observable.just(mNeedBackupTime).observeOn(Schedulers.io()).subscribe(new Subscriber&amp;lt;Long&amp;gt;() {
+        @Override
+        public void onCompleted() {
+            // 跨天的处理，不考虑状态
+            startUploading();
+        }
+
+        @Override
+        public void onError(Throwable e) {
+
+        }
+
+        @Override
+        public void onNext(Long startTime) {
+            // 已经备份到的时间
+            Date timeForBackupDate = Date.dateWithMilliSeconds(startTime);
+            // 当前的时间
+            Date endTime = Date.now().startOfCurrentDayInGMT8();
+
+            while (timeForBackupDate.before(endTime)) {
+                // 将这天加入备份中
+                addBatchedDataToUploading(timeForBackupDate, timeForBackupDate.twentyFourHoursNext(), UserUtil.userId() + &quot;&quot;, UserUtil.deviceId());
+
+                // 备份记录往后移一天
+                setNeedBackupTime(timeForBackupDate.twentyFourHoursNext().getTime());
+                timeForBackupDate = timeForBackupDate.twentyFourHoursNext();
+            }
+
+        }
+        });
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+&lt;p&gt;#### Handler的实现 ####&lt;/p&gt;
+
+&lt;p&gt;ViewPagerFragment中对页面上圆环更新时的实现&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public MyHandler mHandler;
+
+/**
+ * 接受消息,处理消息 ,此Handler会与当前主线程一块运行
+ */
+public static class MyHandler extends Handler {
+    private WeakReference&amp;lt;ViewPagerFragment&amp;gt; mFragmentRef;
+
+    public MyHandler(ViewPagerFragment fragment) {
+        mFragmentRef = new WeakReference(fragment);
+    }
+
+    // 子类必须重写此方法,接受数据
+    @Override
+    public void handleMessage(Message msg) {
+        if (mFragmentRef.get() == null)
+            return;
+
+        mFragmentRef.get().processMessage(msg);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;通过发送handler的消息进行通信&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mHandler.sendEmptyMessage(MESSAGE_DAILYSTATS_UPDATE);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;rxjava--1&quot;&gt;RxJava 替代方案&lt;/h4&gt;
+&lt;p&gt;直接运行该updateCircle函数，即可以实现圆环的更新&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public void updateCircle(final boolean isAnimator) {
+    // 先获取DailyStats数据，然后进行UI的更新
+    HomePageDataManager.getDailyStatsObservable(Date.now())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Action1&amp;lt;DailyStats&amp;gt;() {
+                @Override
+                public void call(DailyStats o) {
+                    mMinCircleView.updateData(o, isAnimator);
+                }
+            });
+}
+
+public static Observable getDailyStatsObservable(Date date) {
+
+    return Observable.just(date)
+            .map(new Func1&amp;lt;Date, DailyStats&amp;gt;() {
+                @Override
+                public DailyStats call(Date date) {
+                    return HomePageDataManager.getDailyStatsByDate(date);
+                }
+            })
+            .subscribeOn(Schedulers.io());
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+        <pubDate>Tue, 05 Jan 2016 15:07:22 +0800</pubDate>
+        <link>http://pfdai.github.io/rxjava/2016/01/05/RxJavaRecord.html</link>
+        <guid isPermaLink="true">http://pfdai.github.io/rxjava/2016/01/05/RxJavaRecord.html</guid>
+        
+        
+        <category>rxjava</category>
+        
+      </item>
+    
+  </channel>
+</rss>
