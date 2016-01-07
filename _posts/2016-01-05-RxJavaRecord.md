@@ -23,7 +23,6 @@ subscribeOn(): 指定 subscribe() 所发生的线程，即 Observable.OnSubscrib
 
 observeOn(): 指定 Subscriber 所运行在的线程。或者叫做事件消费的线程。
 
-
     Observable.just(1, 2, 3, 4)
     .subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
     .observeOn(AndroidSchedulers.mainThread()) // 指定 Subscriber 的回调发生在主线程
@@ -33,7 +32,6 @@ observeOn(): 指定 Subscriber 所运行在的线程。或者叫做事件消费�
             Log.d(tag, "number:" + number);
         }
     });
-        
 
 ### 3. 两个例子，RxJava 分别替代 AsyncTask和Handler ###
 
@@ -124,6 +122,7 @@ BackupUntilNowTask的代码
             });
 
 -------------------------------------------------------------------------------
+
 #### Handler的实现 ####
 
 ViewPagerFragment中对页面上圆环更新时的实现

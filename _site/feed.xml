@@ -6,35 +6,132 @@
 </description>
     <link>http://pfdai.github.io/</link>
     <atom:link href="http://pfdai.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 05 Jan 2016 17:04:29 +0800</pubDate>
-    <lastBuildDate>Tue, 05 Jan 2016 17:04:29 +0800</lastBuildDate>
+    <pubDate>Thu, 07 Jan 2016 20:50:46 +0800</pubDate>
+    <lastBuildDate>Thu, 07 Jan 2016 20:50:46 +0800</lastBuildDate>
     <generator>Jekyll v2.4.0</generator>
     
       <item>
-        <title>Welcome to Jekyll!</title>
-        <description>&lt;p&gt;You’ll find this post in your &lt;code&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
+        <title>Volley的扩展</title>
+        <description>&lt;h2 id=&quot;volleypost&quot;&gt;Volley使用Post方法&lt;/h2&gt;
 
-&lt;p&gt;To add new posts, simply add a file in the &lt;code&gt;_posts&lt;/code&gt; directory that follows the convention &lt;code&gt;YYYY-MM-DD-name-of-post.ext&lt;/code&gt; and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.&lt;/p&gt;
+&lt;p&gt;volley默认只支持Get方法的请求，需要通过重载Request的getParams()方法，将Post的内容传入Request中，同时将Request的请求方法设置为Method.POST&lt;/p&gt;
 
-&lt;p&gt;Jekyll also offers powerful support for code snippets:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;    StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+            new Response.Listener&amp;lt;String&amp;gt;() {
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Hi, &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;Tom&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;c1&quot;&gt;#=&amp;gt; prints &amp;#39;Hi, Tom&amp;#39; to STDOUT.&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+                @Override
+                public void onResponse(String s) {
+                    vh.onSuccess(s);
+                }
+            },
+            new Response.ErrorListener() {
 
-&lt;p&gt;Check out the &lt;a href=&quot;http://jekyllrb.com/docs/home&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/jekyll/jekyll&quot;&gt;Jekyll’s GitHub repo&lt;/a&gt;. If you have questions, you can ask them on &lt;a href=&quot;https://talk.jekyllrb.com/&quot;&gt;Jekyll Talk&lt;/a&gt;.&lt;/p&gt;
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    vh.onFailure(1);
+                }
+            }) {
+
+        @Override
+        protected Map&amp;lt;String, String&amp;gt; getParams() {
+            return para.getPara();
+        }
+    };
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;request&quot;&gt;Request请求的缓存&lt;/h2&gt;
+
+&lt;h1 id=&quot;section&quot;&gt;自定义缓存机制&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://stackoverflow.com/questions/16781244/android-volley-jsonobjectrequest-caching&quot;&gt;Android Volley + JSONObjectRequest Caching&lt;/a&gt;
+默认的页面缓存机制来自于服务器所传输的Header头部内容，根据这些内容来处理缓存的机制 Cache-Control
+需要重构Request对应的parseNetworkResponse方法&lt;/p&gt;
+
+&lt;h1 id=&quot;section-1&quot;&gt;需要重载的对应代码&lt;/h1&gt;
+
+&lt;p&gt;对应的源代码是通过判断 request.shouldCache(), 获取具体内容的键值对为 request.getCacheKey(),默认的key为mUrl，但
+post请求是包含body的所有这里需要重载post请求来支持缓存。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    // If the request is uncacheable, skip the cache queue and go straight to the network.
+    if (!request.shouldCache()) {
+        mNetworkQueue.add(request);
+        return request;
+    }
+
+    // Insert request into stage if there&#39;s already a request with the same cache key in flight.
+    synchronized (mWaitingRequests) {
+        String cacheKey = request.getCacheKey();
+        if (mWaitingRequests.containsKey(cacheKey)) {
+            // There is already a request in flight. Queue up.
+            Queue&amp;lt;Request&amp;lt;?&amp;gt;&amp;gt; stagedRequests = mWaitingRequests.get(cacheKey);
+            if (stagedRequests == null) {
+                stagedRequests = new LinkedList&amp;lt;Request&amp;lt;?&amp;gt;&amp;gt;();
+            }
+            stagedRequests.add(request);
+            mWaitingRequests.put(cacheKey, stagedRequests);
+            if (VolleyLog.DEBUG) {
+                VolleyLog.v(&quot;Request for cacheKey=%s is in flight, putting on hold.&quot;, cacheKey);
+            }
+        } else {
+            // Insert &#39;null&#39; queue for this cacheKey, indicating there is now a request in
+            // flight.
+            mWaitingRequests.put(cacheKey, null);
+            mCacheQueue.add(request);
+        }
+        return request;
+    }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;section-2&quot;&gt;图片的内存和本地缓存&lt;/h2&gt;
+
+&lt;p&gt;Volley对于图片的处理，有ImageRequest、ImageLoader等，ImageLoader是管理协调大量的ImageRequest的类；
+通过引入DiskLruCache和BitmapLruCache的方式可以实现图片在内存和本地两层缓存机制&lt;/p&gt;
+
+&lt;p&gt;需要重载的方法为 getBitmap和setBitmap&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@Override
+public Bitmap getBitmap(String urlKey) {
+    // 先从内存中获取
+    Bitmap bitmap = get(urlKey);
+
+    // 内存中没有，从本地获取
+    if (bitmap == null &amp;amp;&amp;amp; mDiskLruCache != null &amp;amp;&amp;amp; !mDiskLruCache.isClosed()) {
+        String key = Md5.md5(urlKey);
+        try {
+            if (mDiskLruCache.get(key) != null)
+                bitmap = getBitmapFromDiskLruCache(key);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    return bitmap;
+    // return mCache.get(url);
+}
+
+@Override
+public void putBitmap(String urlKey, Bitmap bitmap) {
+    put(urlKey, bitmap);
+
+    // 放入本地缓存
+    String key = Md5.md5(urlKey);
+    try {
+        if (bitmap != null &amp;amp;&amp;amp; mDiskLruCache != null &amp;amp;&amp;amp; !mDiskLruCache.isClosed() &amp;amp;&amp;amp; null == mDiskLruCache.get(key)) {
+            putBitmapToDiskLruCache(key, bitmap);
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
 
 </description>
-        <pubDate>Tue, 05 Jan 2016 15:07:22 +0800</pubDate>
-        <link>http://pfdai.github.io/jekyll/update/2016/01/05/welcome-to-jekyll.html</link>
-        <guid isPermaLink="true">http://pfdai.github.io/jekyll/update/2016/01/05/welcome-to-jekyll.html</guid>
+        <pubDate>Thu, 07 Jan 2016 00:00:00 +0800</pubDate>
+        <link>http://pfdai.github.io/volley/2016/01/07/volleyRecord.html</link>
+        <guid isPermaLink="true">http://pfdai.github.io/volley/2016/01/07/volleyRecord.html</guid>
         
         
-        <category>jekyll</category>
-        
-        <category>update</category>
+        <category>volley</category>
         
       </item>
     
@@ -160,7 +257,8 @@ task.execute();
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;hr /&gt;
-&lt;p&gt;#### Handler的实现 ####&lt;/p&gt;
+
+&lt;h4 id=&quot;handler&quot;&gt;Handler的实现&lt;/h4&gt;
 
 &lt;p&gt;ViewPagerFragment中对页面上圆环更新时的实现&lt;/p&gt;
 
